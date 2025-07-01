@@ -37,7 +37,7 @@ const form_register = async (req, res) => {
 
 const get_users = async (req, res) => {
     try {
-        const rows = await db.query('SELECT NOW() as now');
+        const rows = await db.query('SELECT * FROM users');
         res.json({ success: true, data: rows });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
