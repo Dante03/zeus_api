@@ -1,8 +1,44 @@
 import db from '../src/config/db.js';
 import bcrypt from 'bcrypt';
 
-const form_login = (req, res) => {
-    res.json({ msg: 'Inicia sesion' });
+const form_login = async (req, res) => {
+    const { email, password } = req.body;
+
+  try {
+    // 1. Buscar usuario por email
+    const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    const user = users[0];
+
+    // 2. Comparar la contraseña
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
+    }
+
+    // 3. Éxito: devolver datos del usuario (sin contraseña)
+    const { id, name, email: userEmail, created_at } = user;
+
+    res.json({
+      success: true,
+      message: 'Inicio de sesión exitoso',
+      user: {
+        id,
+        name,
+        email: userEmail,
+        created_at
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Error interno del servidor' });
+  }
 };
 
 const form_register = async (req, res) => {
