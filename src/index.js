@@ -7,6 +7,7 @@ const app = express();
 /* app.get('/', routes);
 app.post('/', routes);
 app.get('/faq', routes); */
+app.use(express.json());
 app.use('/', routes);
 
 //app.use('/', routes)
