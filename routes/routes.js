@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-router.get('/login',
+router.post('/login',
     form_login);
 
 router.route('/users')
